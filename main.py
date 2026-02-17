@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QApplication
 
 from models.base import init_db
 from ui.main_window import MainWindow
+from ui.login_dialog import LoginDialog
 
 
 def main() -> None:
@@ -12,7 +13,12 @@ def main() -> None:
     init_db()
 
     app = QApplication(sys.argv)
-    window = MainWindow()
+
+    login = LoginDialog()
+    if login.exec() != LoginDialog.Accepted:
+        return
+
+    window = MainWindow(current_user=login.current_user)
     window.show()
     sys.exit(app.exec())
 

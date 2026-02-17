@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QListWidget,
     QStackedWidget,
     QListWidgetItem,
+    QLabel,
 )
 
 from ui.goods_view import GoodsView
@@ -16,8 +17,9 @@ from ui.stock_view import StockView
 class MainWindow(QMainWindow):
     """应用主窗口：左侧菜单 + 右侧内容区。"""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, current_user=None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.current_user = current_user
         self.setWindowTitle("库存管理系统")
         self.resize(1100, 700)
 
@@ -52,4 +54,10 @@ class MainWindow(QMainWindow):
 
         self.menu_list.currentRowChanged.connect(self.stack.setCurrentIndex)
         self.menu_list.setCurrentRow(0)
+
+        # 简单基于角色的按钮控制示例（只读用户不能增删改）
+        if getattr(self.current_user, "role", None) == "viewer":
+            self.goods_view.add_btn.setEnabled(False)
+            self.goods_view.edit_btn.setEnabled(False)
+            self.goods_view.delete_btn.setEnabled(False)
 
