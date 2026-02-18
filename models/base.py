@@ -1,17 +1,14 @@
-from pathlib import Path
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
+from config.settings import DB_FILE, DATA_DIR
 # SQLAlchemy 基础 Base 类
 Base = declarative_base()
 
 
-def get_db_path() -> Path:
-    """返回 SQLite 数据库文件路径，并确保目录存在。"""
-    data_dir = Path(__file__).resolve().parent.parent / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    return data_dir / "inventory.db"
+def get_db_path():
+    """返回 SQLite 数据库文件路径（集中由 config.settings 管理）。"""
+    return DB_FILE
 
 
 _ENGINE = create_engine(

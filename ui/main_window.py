@@ -12,6 +12,7 @@ from ui.goods_view import GoodsView
 from ui.stock_in_view import StockInView
 from ui.stock_out_view import StockOutView
 from ui.stock_view import StockView
+from ui.report_view import ReportView
 
 
 class MainWindow(QMainWindow):
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.menu_list.addItem(QListWidgetItem("入库管理"))
         self.menu_list.addItem(QListWidgetItem("出库管理"))
         self.menu_list.addItem(QListWidgetItem("库存查询"))
+        self.menu_list.addItem(QListWidgetItem("报表中心"))
 
         # 右侧内容区
         self.stack = QStackedWidget(central)
@@ -41,11 +43,13 @@ class MainWindow(QMainWindow):
         self.stock_in_view = StockInView()
         self.stock_out_view = StockOutView()
         self.stock_view = StockView()
+        self.report_view = ReportView()
 
         self.stack.addWidget(self.goods_view)
         self.stack.addWidget(self.stock_in_view)
         self.stack.addWidget(self.stock_out_view)
         self.stack.addWidget(self.stock_view)
+        self.stack.addWidget(self.report_view)
 
         layout.addWidget(self.menu_list)
         layout.addWidget(self.stack, 1)
