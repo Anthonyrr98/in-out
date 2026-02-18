@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from models.goods import Goods
 from models.stock import Stock
 from models.stock_out import StockOut, StockOutItem
+from models.stock_flow import StockFlow
 
 
 class StockOutItemData(TypedDict):
@@ -88,6 +89,16 @@ class StockOutService:
                 goods_id=item["goods_id"],
                 quantity=item["quantity"],
             )
+
+            # 记录库存流水（数量为负）
+            flow = StockFlow(
+                goods_id=item["goods_id"],
+                change_type="out",
+                change_qty=-abs(item["quantity"]),
+                ref_order_type="stock_out",
+                ref_order_id=stock_out.id,
+            )
+            session.add(flow)
 
         session.flush()
         return stock_out

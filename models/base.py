@@ -32,6 +32,7 @@ def init_db() -> None:
     import models.stock_in  # noqa: F401
     import models.stock_out  # noqa: F401
     import models.user  # noqa: F401
+    import models.stock_flow  # noqa: F401
 
     Base.metadata.create_all(bind=_ENGINE)
 

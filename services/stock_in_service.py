@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from models.goods import Goods
 from models.stock import Stock
 from models.stock_in import StockIn, StockInItem
+from models.stock_flow import StockFlow
 
 
 class StockInItemData(TypedDict):
@@ -78,6 +79,16 @@ class StockInService:
                 batch_no=item.get("batch_no"),
                 location=item.get("location"),
             )
+
+            # 记录库存流水
+            flow = StockFlow(
+                goods_id=item["goods_id"],
+                change_type="in",
+                change_qty=item["quantity"],
+                ref_order_type="stock_in",
+                ref_order_id=stock_in.id,
+            )
+            session.add(flow)
 
         session.flush()
         return stock_in

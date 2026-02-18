@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, Text
+from sqlalchemy import Column, Integer, String, Numeric, Text, Boolean
 
 from .base import Base
 
@@ -18,4 +18,5 @@ class Goods(Base):
     sell_price = Column(Numeric(18, 4), nullable=True, comment="销售价")
     min_stock = Column(Numeric(18, 4), nullable=True, comment="最低库存预警")
     remark = Column(Text, nullable=True, comment="备注")
+    is_active = Column(Boolean, nullable=False, default=True, comment="是否启用")
 

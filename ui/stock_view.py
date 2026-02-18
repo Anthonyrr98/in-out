@@ -1,5 +1,16 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit, QPushButton, QTableWidget, QTableWidgetItem
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QHBoxLayout,
+    QLineEdit,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QCheckBox,
+    QHeaderView,
+)
 
 from services.stock_service import StockService
 from services.base import get_session
@@ -17,6 +28,8 @@ class StockView(QWidget):
         top.addWidget(QLabel("关键字：", self))
         self.keyword_edit = QLineEdit(self)
         top.addWidget(self.keyword_edit)
+        self.only_warning_chk = QCheckBox("只显示预警", self)
+        top.addWidget(self.only_warning_chk)
         self.search_btn = QPushButton("查询", self)
         top.addWidget(self.search_btn)
         top.addStretch(1)
@@ -28,19 +41,21 @@ class StockView(QWidget):
         self.table.setHorizontalHeaderLabels(
             ["编码", "名称", "分类", "库存数量", "批次", "库位", "有效期"]
         )
-        self.table.horizontalHeader().setStretchLastSection(True)
+        header = self.table.horizontalHeader()
+        header.setStretchLastSection(True)
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
         layout.addWidget(self.table, 1)
 
         self.search_btn.clicked.connect(self.refresh_table)
+        self.only_warning_chk.stateChanged.connect(self.refresh_table)
         self.refresh_table()
 
     def refresh_table(self) -> None:
-        from models.stock import Stock  # 避免循环导入
-
         keyword = self.keyword_edit.text().strip() or None
+        only_warning = self.only_warning_chk.isChecked()
         with get_session() as session:
             rows, _ = StockService.list_stock(
-                session, keyword=keyword, only_warning=False, page=1, page_size=500
+                session, keyword=keyword, only_warning=only_warning, page=1, page_size=500
             )
             self.table.setRowCount(len(rows))
             for row, s in enumerate(rows):
@@ -58,5 +73,4 @@ class StockView(QWidget):
                     item = QTableWidgetItem(v)
                     item.setTextAlignment(Qt.AlignCenter)
                     self.table.setItem(row, col, item)
-
 

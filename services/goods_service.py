@@ -83,7 +83,8 @@ class GoodsService:
         goods = session.get(Goods, goods_id)
         if not goods:
             return
-        session.delete(goods)
+        # 逻辑删除，避免破坏已有单据和库存
+        goods.is_active = False
         session.flush()
 
     @staticmethod
@@ -95,8 +96,8 @@ class GoodsService:
         page_size: int = 50,
     ) -> Tuple[List[Goods], int]:
         """返回 (数据列表, 总条数)。"""
-        stmt = select(Goods)
-        count_stmt = select(func.count()).select_from(Goods)
+        stmt = select(Goods).where(Goods.is_active.is_(True))
+        count_stmt = select(func.count()).select_from(Goods).where(Goods.is_active.is_(True))
         if keyword:
             kw = f"%{keyword}%"
             stmt = stmt.where((Goods.code.like(kw)) | (Goods.name.like(kw)))

@@ -31,11 +31,16 @@ class MainWindow(QMainWindow):
         # 左侧菜单
         self.menu_list = QListWidget(central)
         self.menu_list.setFixedWidth(180)
-        self.menu_list.addItem(QListWidgetItem("商品管理"))
-        self.menu_list.addItem(QListWidgetItem("入库管理"))
-        self.menu_list.addItem(QListWidgetItem("出库管理"))
-        self.menu_list.addItem(QListWidgetItem("库存查询"))
-        self.menu_list.addItem(QListWidgetItem("报表中心"))
+        self.menu_list.addItem(QListWidgetItem("商品管理"))          # index 0
+        self.menu_list.addItem(QListWidgetItem("入库管理"))          # index 1
+        self.menu_list.addItem(QListWidgetItem("出库管理"))          # index 2
+        self.menu_list.addItem(QListWidgetItem("库存查询"))          # index 3
+        # 报表中心仅管理员和只读用户可见
+        self.report_index = None
+        role = getattr(self.current_user, "role", "admin")
+        if role in ("admin", "viewer"):
+            self.report_index = self.menu_list.count()
+            self.menu_list.addItem(QListWidgetItem("报表中心"))      # index 4 (if added)
 
         # 右侧内容区
         self.stack = QStackedWidget(central)
@@ -59,15 +64,19 @@ class MainWindow(QMainWindow):
         self.menu_list.currentRowChanged.connect(self.stack.setCurrentIndex)
         self.menu_list.setCurrentRow(0)
 
-        # 简单基于角色的按钮控制示例（只读用户不能增删改）
-        if getattr(self.current_user, "role", None) == "viewer":
+        role = getattr(self.current_user, "role", None)
+
+        # 简单基于角色的按钮控制示例
+        if role == "viewer":
             self.goods_view.add_btn.setEnabled(False)
             self.goods_view.edit_btn.setEnabled(False)
             self.goods_view.delete_btn.setEnabled(False)
+            self.stock_in_view.new_btn.setEnabled(False)
+            self.stock_out_view.new_btn.setEnabled(False)
 
         # 状态栏显示当前用户信息
         user_name = getattr(self.current_user, "username", "未知用户")
-        role = getattr(self.current_user, "role", "unknown")
+        role = role or "unknown"
         status = self.statusBar()
         status.showMessage(f"当前用户：{user_name}（角色：{role}）")
 

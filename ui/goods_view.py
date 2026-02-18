@@ -188,7 +188,7 @@ class GoodsEditDialog(QDialog):
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel, parent=self
         )
-        buttons.accepted.connect(self.accept)
+        buttons.accepted.connect(self._on_accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
 
@@ -205,6 +205,12 @@ class GoodsEditDialog(QDialog):
         self.sell_price_edit.setText("" if g.sell_price is None else str(g.sell_price))
         self.min_stock_edit.setText("" if g.min_stock is None else str(g.min_stock))
         self.remark_edit.setText(g.remark or "")
+
+    def _on_accept(self) -> None:
+        if not self.code_edit.text().strip() or not self.name_edit.text().strip():
+            QMessageBox.warning(self, "校验失败", "编码和名称为必填项")
+            return
+        self.accept()
 
     def get_data(self) -> dict:
         def _to_float(text: str) -> float | None:
