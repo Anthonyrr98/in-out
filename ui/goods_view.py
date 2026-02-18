@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QDialogButtonBox,
     QMessageBox,
+    QHeaderView,
 )
 
 from services.goods_service import GoodsService
@@ -44,8 +45,12 @@ class GoodsView(QWidget):
         self.table = QTableWidget(self)
         self.table.setColumnCount(5)
         self.table.setHorizontalHeaderLabels(["编码", "名称", "分类", "规格", "单位"])
-        self.table.horizontalHeader().setStretchLastSection(True)
+        header = self.table.horizontalHeader()
+        header.setStretchLastSection(True)
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.table.setSelectionMode(QTableWidget.SingleSelection)
         main_layout.addWidget(self.table, 1)
 
         # 底部按钮
@@ -65,6 +70,7 @@ class GoodsView(QWidget):
         self.add_btn.clicked.connect(self.add_goods)
         self.edit_btn.clicked.connect(self.edit_goods)
         self.delete_btn.clicked.connect(self.delete_goods)
+        self.table.cellDoubleClicked.connect(lambda _r, _c: self.edit_goods())
 
         # 初次加载
         self.refresh_table()

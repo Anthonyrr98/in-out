@@ -65,3 +65,9 @@ class MainWindow(QMainWindow):
             self.goods_view.edit_btn.setEnabled(False)
             self.goods_view.delete_btn.setEnabled(False)
 
+        # 状态栏显示当前用户信息
+        user_name = getattr(self.current_user, "username", "未知用户")
+        role = getattr(self.current_user, "role", "unknown")
+        status = self.statusBar()
+        status.showMessage(f"当前用户：{user_name}（角色：{role}）")
+

@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QDialogButtonBox,
     QMessageBox,
+    QHeaderView,
 )
 
 from services.base import get_session
@@ -38,7 +39,9 @@ class StockInView(QWidget):
         self.table = QTableWidget(self)
         self.table.setColumnCount(4)
         self.table.setHorizontalHeaderLabels(["单号", "供应商", "日期", "操作员ID"])
-        self.table.horizontalHeader().setStretchLastSection(True)
+        header = self.table.horizontalHeader()
+        header.setStretchLastSection(True)
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
         layout.addWidget(self.table, 1)
 
         self.new_btn.clicked.connect(self.new_stock_in)

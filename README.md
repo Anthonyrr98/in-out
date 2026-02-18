@@ -26,3 +26,19 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### 打包为 Windows 可执行文件（预览）
+
+1. 在虚拟环境中安装 PyInstaller：
+
+```bash
+pip install pyinstaller
+```
+
+2. 在项目根目录执行打包脚本：
+
+```bash
+build_exe.bat
+```
+
+3. 打包成功后，可在 `dist/` 目录下找到 `InOutInventory.exe`，双击即可运行。数据库和报表导出目录由 `config/settings.py` 管理，开发阶段默认在项目根下的 `data/` 与 `exports/` 中。
+
